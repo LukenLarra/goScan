@@ -1,8 +1,5 @@
 # goScan
 
-[![CI](https://github.com/tu-usuario/goscan/actions/workflows/ci.yml/badge.svg)](https://github.com/tu-usuario/goscan/actions/workflows/ci.yml)
-[![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://go.dev)
-
 **goScan** es un escáner de puertos TCP concurrente escrito en Go. Escanea miles de puertos por segundo usando un worker pool de goroutines, canales y `context.Context`. Incluye detección de servicios por banner grabbing, exportación a múltiples formatos, barra de progreso, y está diseñado desde cero para ser portable, testeable y fácil de extender.
 
 ---
@@ -17,46 +14,6 @@ goScan sigue el patrón clásico de **worker pool**:
 4. **Output** — al finalizar, imprime una tabla coloreada y opcionalmente exporta a JSON, CSV o TXT
 
 Cada worker respeta la cancelación del `context.Context`, lo que permite interrupción graceful con Ctrl+C.
-
-```
-┌────────────┐   jobs chan   ┌──────────┐   results chan   ┌────────────┐
-│ Dispatcher │─────ports─────▶│ Workers  │─────results─────▶│ Aggregator │
-│            │                │ (N goros)│                  │            │
-│  range     │                │          │                  │  progress  │
-│  ports[]   │                │ Dial(..) │                  │  bar +     │
-│            │                │          │                  │  collect   │
-└────────────┘                └──────────┘                  └─────┬──────┘
-                                                                  │
-                                                           ┌──────▼──────┐
-                                                           │   Output    │
-                                                           │ table,JSON, │
-                                                           │ CSV,summary │
-                                                           └─────────────┘
-```
-
-## Arquitectura
-
-```
-goscan/
-├── cmd/goscan/main.go       # Punto de entrada, flags cobra, signal handling
-├── internal/
-│   ├── scan/                # Núcleo del escáner
-│   │   ├── scanner.go       #   Dialer interface, ScanPort, Scanner + Run()
-│   │   ├── ports.go         #   Parseo de rangos de puertos
-│   │   ├── result.go        #   Struct Result
-│   │   └── *_test.go        #   Tests con MockDialer (net.Pipe)
-│   └── report/              # Salida y exportación
-│       ├── reporter.go      #   Interfaz Reporter + factory ForFile
-│       ├── text.go          #   Tabla coloreada en terminal
-│       ├── json.go          #   Exportación JSON indentada
-│       ├── csv.go           #   Exportación CSV
-│       └── summary.go       #   Resumen final
-└── pkg/
-    └── banner/              # Identificación de servicios
-        ├── grab.go          #   Banner grabbing con probe HTTP
-        ├── identify.go      #   Firma por prefijo de bytes
-        └── *_test.go        #   Tests con net.Pipe
-```
 
 ## Conceptos de Go que demuestra
 
