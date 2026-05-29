@@ -73,14 +73,6 @@ goscan/
 | **Multi-stage Docker** | Builder + scratch para binario estático mínimo |
 | **Cross-compilation** | CI y GoReleaser para linux/windows/darwin, amd64/arm64 |
 
-## Instalación
-
-```bash
-go install github.com/tu-usuario/goscan@latest
-```
-
-O descarga el binario desde [Releases](https://github.com/tu-usuario/goscan/releases).
-
 ## Uso
 
 ```bash
@@ -113,21 +105,6 @@ goscan --help
 | `--all` `-a` | `false` | Mostrar puertos cerrados en la tabla |
 | `--version` `-v` | `false` | Mostrar versión del binario |
 
-## Benchmarks
-
-Midiendo tiempo de escaneo de 1024 puertos contra `scanme.nmap.org`:
-
-| Workers | Tiempo | Speedup |
-|---|---|---|
-| 1 (secuencial) | ~18s | 1x |
-| 50 | ~1.2s | 15x |
-| 200 (default) | ~0.4s | 45x |
-| 500 | ~0.3s | 60x |
-
-```bash
-go test -bench=. -benchmem ./internal/scan/
-```
-
 ## Desarrollo
 
 ```bash
@@ -149,15 +126,6 @@ go vet ./...
 ```bash
 docker build -t goscan .
 docker run --rm goscan --host scanme.nmap.org --ports 80,443
-```
-
-## Releases
-
-Al crear un tag, GoReleaser genera binarios automáticamente:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
 ```
 
 ## Aviso legal
